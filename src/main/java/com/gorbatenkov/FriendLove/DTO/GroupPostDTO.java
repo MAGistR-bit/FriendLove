@@ -147,7 +147,4 @@ public class GroupPostDTO extends PostDTO {
         return groupPostComments;
     }
 
-    public void setGroupPostComments(List<GroupPostComment> groupPostComments) {
-        this.groupPostComments = groupPostComments;
-    }
 }
