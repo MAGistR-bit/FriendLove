@@ -7,6 +7,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * Используется для предоставления информации о пользователе Spring Security
+ * @param user пользователь
+ */
 public record UserDetails(User user) implements org.springframework.security.core.userdetails.UserDetails {
 
     /**
