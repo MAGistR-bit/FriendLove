@@ -56,7 +56,7 @@ public class ProfileController {
     public User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return userService.findByPhoneNumber(userDetails.getUser().getPhoneNumber()).get();
+        return userService.findByPhoneNumber(userDetails.user().getPhoneNumber()).get();
     }
 
 
