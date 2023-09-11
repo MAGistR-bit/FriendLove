@@ -119,7 +119,6 @@ public class User {
     @JsonIgnore
     private List<Post> posts;
 
-    
     @ManyToMany(mappedBy = "members")
     @JsonIgnore
     private List<Group> subscriptionGroup;
