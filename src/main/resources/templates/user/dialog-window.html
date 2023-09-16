@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--  Заголовок веб-страницы -->
+    <title>Сообщения</title>
+    <!--  Подключение CSS и Bootstrap  -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+            crossorigin="anonymous"></script>
+</head>
+<body style="background-color: #F0F1F2;">
+
+<!-- Навигационная панель -->
+<nav class="navbar" style="background-color: #FFFFFF;">
+    <div class="container-fluid my-2 mx-5">
+        <!--   Название социальной сети     -->
+        <a class="navbar-brand fs-3 fw-bold text-primary ms-2"
+           th:text="${@environment.getProperty('app.projectName.en')}">
+            FriendLove
+        </a>
+        <!--  Блок информации о пользователе  -->
+        <div class="d-flex justify-content-end">
+            <div class="dropdown-center ms-3">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <img th:src="@{${authorizedUser.getAvatar()}}" class="rounded-circle" style="vertical-align: middle;
+                                  width: 28px;
+                                  height: 28px;
+                                  object-fit: cover;
+                                  border-radius: 50%;"
+                         alt="Аватар">
+                    <span th:text="${authorizedUser.getName()+' '+authorizedUser.getSurname()}">
+                        Пользователь
+                    </span>
+                </button>
+                <!--   Выпадающее меню   -->
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/logout">Выход</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Разделы социальной сети -->
+<div class="container text-center my-5 mx-5">
+    <div class="row justify-content-between">
+        <div class="col-2">
+            <div class="list-group text-start">
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold"
+                        form="toProfilePage">
+                    Моя страница
+                </button>
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold"
+                        form="toNewsPage">
+                    Новости
+                </button>
+                <!-- Отображается текущая страница, поэтому выделяем кнопку   -->
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold text-primary">
+                    Сообщения
+                </button>
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold"
+                        form="toGroupsPage">
+                    Группы
+                </button>
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold"
+                        form="toFriendsPage">
+                    Друзья
+                </button>
+                <!-- Отображение конкретных веб-страниц  -->
+                <form id="toProfilePage" th:action="@{/profile}" method="get"></form>
+                <form id="toNewsPage" th:action="@{/}" method="get"></form>
+                <form id="toGroupsPage" th:action="@{/groups}" method="get"></form>
+                <form id="toFriendsPage" th:action="@{/friends}" method="get"></form>
+            </div>
+        </div>
+        <div class="col-7 ms-5 mx-auto">
+            <div class="container rounded bg-white pt-3 pb-1">
+                <a th:href="@{/user/{id}(id=${companion.getId()})}" class="text-decoration-none text-dark">
+                    <img th:src="@{${companion.avatar}}" style="vertical-align: middle;
+                                  width: 55px;
+                                  height: 55px;
+                                  object-fit: cover;
+                                  border-radius: 50%;" class="rounded-circle" alt="...">
+                    <p class="fs-6 fw-semibold mb-0" th:text="${companion.name+' '+companion.surname}">
+                        Товарищ Капитан
+                    </p>
+                </a>
+                <!--   Статус пользователя  -->
+                <p class="fs-6">в сети</p>
+                <div class="card overflow-auto mx-auto p-2" style="height: 350px;width: 85%;background-color: #f3f3f3;">
+
+                    <!--   Дата отправки сообщения    -->
+                    <div class="card p-0 mx-auto" style="width: 100px">
+                        <div class="card-body p-2">
+                            <p class="fs-6 fw-light m-0" th:text="${'6 июля'}">9 сентября</p>
+                        </div>
+                    </div>
+
+                    <th:block th:each="message:${companionMessages}">
+
+                        <div th:if="${message.getSender().getId()==authorizedUser.getId()}"
+                             class="card align-self-end mb-1" style="width: 40%;background-color: #e1eeff;">
+                            <div class="card-body d-flex justify-content-between p-2">
+                                <p class="fs-6 m-0 text-start" th:text="${message.message}">
+                                    Здравия желаю, боец! Будь наготове, вечером выезжаем.
+                                </p>
+                                <p class="fs-6 fw-light m-0"
+                                   th:text="${message.getCreatedAt().getHour()+(message.getCreatedAt().getMinute()<10?':0':':')
+                                   + message.getCreatedAt().getMinute()}">
+                                    10:15 </p>
+                            </div>
+                        </div>
+                        <div th:if="${message.getReceiver().getId()==authorizedUser.getId()}" class="card mb-1"
+                             style="width: 40%;background-color: #f2e9ff;">
+                            <div class="card-body d-flex justify-content-between p-2">
+                                <p class="fs-6 m-0 text-start" th:text="${message.message}">
+                                    Здравия желаю, товарищ капитан!
+                                    Так точно!
+                                </p>
+                                <p class="fs-6 fw-light m-0"
+                                   th:text="${message.getCreatedAt().getHour()+(message.getCreatedAt().getMinute()<10?':0':':')
+                                   + message.getCreatedAt().getMinute()}">
+                                    10:26</p>
+                            </div>
+                        </div>
+
+                    </th:block>
+
+                </div>
+                <!--   Форма для отправки сообщений    -->
+                <form th:method="POST" th:action="@{/messages/sendMessage}" class="d-flex justify-content-center my-4"
+                      role="search">
+                    <input class="form-control me-2" type="text" name="message" style="max-width: 70%;"
+                           placeholder="Напишите сообщение" aria-label="Search">
+                    <input type="hidden" name="receiver_id" th:value="${companion.id}">
+                    <input type="hidden" name="sender_id" th:value="${authorizedUser.id}">
+                    <button class="btn btn-outline-success" type="submit">Отправить</button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+</body>
+</html>
