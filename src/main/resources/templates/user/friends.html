@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--  Заголовок веб-страницы  -->
+    <title>Друзья</title>
+    <!--  Подключение CSS и Bootstrap  -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+            crossorigin="anonymous"></script>
+</head>
+<!-- Оформление -->
+<body style="background-color: #F0F1F2;">
+
+<nav class="navbar" style="background-color: #FFFFFF;">
+    <div class="container-fluid my-2 mx-5">
+        <!--  Название социальной сети   -->
+        <a class="navbar-brand fs-3 fw-bold text-primary ms-2"
+           th:text="${@environment.getProperty('app.projectName.en')}">FriendLove</a>
+        <div class="d-flex justify-content-end">
+            <div class="dropdown-center ms-3">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <img th:src="@{${authorizedUser.getAvatar()}}" class="rounded-circle" style="vertical-align: middle;
+                                  width: 28px;
+                                  height: 28px;
+                                  object-fit: cover;
+                                  border-radius: 50%;"
+                         alt="Аватар">
+                    <span th:text="${authorizedUser.getName()+' '+authorizedUser.getSurname()}">Пользователь</span>
+                </button>
+                <!--   Выпадающий список  -->
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/logout">Выход</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Разделы социальной сети -->
+<div class="container text-center my-5 mx-5">
+    <div class="row justify-content-between">
+        <div class="col-2">
+            <div class="list-group text-start">
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold"
+                        form="toPersonalPage">
+                    Моя страница
+                </button>
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold"
+                        form="toNewsPage">
+                    Новости
+                </button>
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold" form="toMessagesPage">
+                    Сообщения
+                </button>
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold"
+                        form="toGroupsPage">
+                    Группы
+                </button>
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold text-primary">
+                    Друзья
+                </button>
+                <!--  Переход на определенные веб-страницы  -->
+                <form id="toPersonalPage" th:action="@{/profile}" method="get"></form>
+                <form id="toNewsPage" th:action="@{/}" method="get"></form>
+                <form id="toMessagesPage" th:action="@{/messages}" method="get"></form>
+                <form id="toGroupsPage" th:action="@{/groups}" method="get"></form>
+            </div>
+        </div>
+        <div class="col-7 ms-5 mx-auto">
+            <div class="container rounded bg-white py-4 ps-3 mx-auto">
+                <!--   Форма для поиска друзей  -->
+                <form th:method="GET" th:action="@{/friends}" class="d-flex justify-content-center mb-5" role="search">
+                    <input class="form-control me-2 ms-5" type="text" name="q" style="max-width: 60%;"
+                           placeholder="Поиск друзей" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Найти</button>
+                </form>
+                <!-- Конец формы -->
+
+                <th:block th:each="person:${searchResult}">
+                    <div th:if="${!friendsId.contains(person.getId())}" class="row p-2 mx-auto mt-3"
+                         style="max-width: 72%;">
+                        <div class="col-2 mt-1">
+                            <a class="navbar-brand" th:href="@{/user/{id}(id=${person.id})}"><img
+                                    th:src="@{${person.getAvatar()}}" style="vertical-align: middle;
+                                  width: 65px;
+                                  height: 65px;
+                                  object-fit: cover;
+                                  border-radius: 50%;" class="rounded-circle me-2"
+                                    alt="..."></a>
+                        </div>
+                        <div class="col-9">
+                            <div class="d-flex justify-content-between">
+                                <a class="navbar-brand" th:href="@{/user/{id}(id=${person.id})}">
+                                    <p class="fs-5" th:text="${person.name+' '+person.surname}">
+                                        Владимир Путин
+                                    </p>
+                                </a>
+                                <button th:if="${!receiversId.contains(person.id)}" type="button"
+                                        onclick="sendRequest(this)" th:data-bs-whatever="${person.getId()}"
+                                        class="btn btn-primary btn-sm" style="height: 30px;"> Добавить в друзья
+                                </button>
+                                <button th:if="${receiversId.contains(person.id)}" type="button"
+                                        class="btn btn-primary btn-sm" disabled style="height: 35px;">Заявка отправлена
+                                </button>
+                            </div>
+                            <p class="fs-6 fw-light text-start text-nowrap"
+                               th:text="${person.location==null?'Город не указан':person.location}">Москва, 70 лет</p>
+                            <hr class="mb-1">
+                        </div>
+                    </div>
+                </th:block>
+                <div th:each="friend:${friends}" class="row p-2 mx-auto mt-3" style="max-width: 72%;">
+                    <div class="col-2 mt-1">
+                        <a class="navbar-brand" th:href="@{/user/{id}(id=${friend.id})}"><img
+                                th:src="@{${friend.avatar}}" style="vertical-align: middle;
+                                  width: 65px;
+                                  height: 65px;
+                                  object-fit: cover;
+                                  border-radius: 50%;" class="rounded-circle me-2"
+                                alt="..."></a>
+                    </div>
+                    <div class="col-9">
+                        <div class="d-flex justify-content-between">
+                            <a class="navbar-brand" th:href="@{/user/{id}(id=${friend.id})}">
+                                <p class="fs-5" th:text="${friend.name+' '+friend.surname}">
+                                    Василий Ташкин </p></a>
+                            <button type="button" class="btn btn-primary btn-sm" disabled style="height: 30px;">
+                                У вас в друзьях
+                            </button>
+                        </div>
+                        <!--  Город, в котором проживает пользователь -->
+                        <p class="fs-6 fw-light text-start text-nowrap"
+                           th:text="${friend.location==null?'Город не указан':friend.location}">Новосибирск, 25 лет</p>
+                        <hr class="mb-1">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!--   Заявки в друзья  -->
+        <div class="col">
+            <a th:href="@{/friends/requests}" class="btn btn-primary position-relative">
+                Заявки в друзья
+                <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle">
+                    <span class="visually-hidden">Новая заявка</span>
+                </span>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<form id="send-request-form" th:method="POST" th:action="@{/friends/request-friendship}">
+    <input type="hidden" id="sender_id" name="sender_id" th:value="${authorizedUser.getId()}">
+    <input type="hidden" id="receiver_id" name="receiver_id">
+</form>
+
+<script>
+    function sendRequest(button) {
+        const receiver_id = JSON.parse(button.getAttribute('data-bs-whatever'));
+
+        const submitForm = document.querySelector('#send-request-form');
+        const receiverIdInput = submitForm.querySelector('input[id=receiver_id]')
+        receiverIdInput.value = receiver_id
+
+        submitForm.submit();
+    }
+</script>
+
+
+</body>
+</html>
