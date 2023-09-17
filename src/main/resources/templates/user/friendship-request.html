@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--  Заголовок -->
+    <title>Заявки в друзья</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+            crossorigin="anonymous"></script>
+</head>
+<!-- Оформление -->
+<body style="background-color: #F0F1F2;">
+
+<nav class="navbar" style="background-color: #FFFFFF;">
+    <div class="container-fluid my-2 mx-5">
+        <a class="navbar-brand fs-3 fw-bold text-primary ms-2"
+           th:text="${@environment.getProperty('app.projectName.en')}">FriendLove</a>
+        <div class="d-flex justify-content-end">
+            <div class="dropdown-center ms-3">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <img th:src="@{${authorizedUser.getAvatar()}}" class="rounded-circle" style="vertical-align: middle;
+                                  width: 28px;
+                                  height: 28px;
+                                  object-fit: cover;
+                                  border-radius: 50%;" alt="Аватар">
+                    <span th:text="${authorizedUser.getName()+' '+authorizedUser.getSurname()}">Пользователь</span>
+                </button>
+                <!-- Выпадающее меню  -->
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/logout">Выход</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container text-center my-5 mx-5">
+    <div class="row justify-content-between">
+        <div class="col-2">
+            <div class="list-group text-start">
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold"
+                        form="toPersonalPage">
+                    Моя страница
+                </button>
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold"
+                        form="toNewsPage">
+                    Новости
+                </button>
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold"
+                        form="toMessagesPage">
+                    Сообщения
+                </button>
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold"
+                        form="toGroupsPage">
+                    Группы
+                </button>
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold text-primary"
+                        form="toFriendsPage">
+                    Друзья
+                </button>
+                <form id="toPersonalPage" th:action="@{/profile}" method="get"></form>
+                <form id="toNewsPage" th:action="@{/}" method="get"></form>
+                <form id="toMessagesPage" th:action="@{/messages}" method="get"></form>
+                <form id="toGroupsPage" th:action="@{/groups}" method="get"></form>
+                <form id="toFriendsPage" th:action="@{/friends}" method="get"></form>
+            </div>
+        </div>
+        <div class="col-7 ms-5 mx-auto">
+            <div class="container rounded bg-white py-4 ps-3 mx-auto">
+                <p class="fs-5 text-center fw-semibold mb-5">Заявки в друзья</p>
+
+                <div th:each="sender:${senders}" class="row p-2 mx-auto mt-2" style="max-width: 72%;">
+                    <div class="col-2 mt-1">
+                        <img th:src="@{${sender.getAvatar()}}" style="vertical-align: middle;
+                                  width: 65px;
+                                  height: 65px;
+                                  object-fit: cover;
+                                  border-radius: 50%;" class="rounded-circle me-2" alt="...">
+                    </div>
+                    <!--   Информация о пользователе  -->
+                    <div class="col-7">
+                        <div class="d-flex justify-content-between">
+                            <p class="fs-5" th:text="${sender.getName() + ' ' + sender.getSurname()}">
+                                Виктор Сухоруков
+                            </p>
+                        </div>
+                        <p class="fs-6 fw-light text-start text-nowrap"
+                           th:text="${sender.location==null?'Город не указан':sender.location}">Орехово-Зуево,
+                            71 год </p>
+
+                    </div>
+                    <!--   Кнопки для принятия решения -->
+                    <div class="col-1">
+                        <button type="button" onclick="acceptFriendship(this)" th:data-bs-whatever="${sender.id}"
+                                class="btn btn-primary btn-sm mb-2" style="height: 30px;">Добавить
+                        </button>
+                        <button type="button" onclick="declineFriendship(this)" th:data-bs-whatever="${sender.id}"
+                                class="btn btn-danger btn-sm" style="height: 30px;">Отклонить
+                        </button>
+                    </div>
+                    <hr class="mb-1">
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="acceptForm" th:method="POST" th:action="@{/friends/accept-friendship}">
+    <input type="hidden" id="user_identifier" name="user_id" th:value="${authorizedUser.id}">
+    <input type="hidden" id="sender_identifier" name="sender_id">
+</form>
+<form id="declineForm" th:method="POST" th:action="@{/friends/decline-friendship}">
+    <input type="hidden" id="user_id" name="user_id" th:value="${authorizedUser.id}">
+    <input type="hidden" id="sender_id" name="sender_id">
+</form>
+
+<script>
+
+    // Принять дружбу (обработка нажатия соответствующей кнопки)
+    function acceptFriendship(button) {
+        const sender_id = JSON.parse(button.getAttribute('data-bs-whatever'));
+
+        const submitForm = document.querySelector('#acceptForm');
+        const senderIdInput = submitForm.querySelector('input[id=sender_identifier]')
+        senderIdInput.value = sender_id
+
+        submitForm.submit();
+    }
+
+    // Отклонить дружбу (обработка нажатия соответствующей кнопки)
+    function declineFriendship(button) {
+        const sender_id = JSON.parse(button.getAttribute('data-bs-whatever'));
+
+        const submitForm = document.querySelector('#declineForm');
+        const senderIdInput = submitForm.querySelector('input[id=sender_id]')
+        senderIdInput.value = sender_id
+
+        submitForm.submit();
+    }
+
+</script>
+
+</body>
+</html>
