@@ -81,3 +81,17 @@ the development of a social network:
 * Thymeleaf (template engine)
 * Bootstrap 5
 </details>
+
+# 🔧 Настройка базы данных (Database settings)
+
+Веб-приложение использует СУБД PostgreSQL. 
+Как же подключить базу данных к проекту? 
+Подробная информация представлена в файле [DB_Settings](DB_Settings.md).
+
+<details>
+<summary> English version</summary>
+
+The web application uses the PostgreSQL. 
+How do I connect the database to the project?
+Detailed information is provided in the file DB_Settings.md.
+</details>
