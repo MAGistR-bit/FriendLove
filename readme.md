@@ -95,3 +95,10 @@ The web application uses the PostgreSQL.
 How do I connect the database to the project?
 Detailed information is provided in the file DB_Settings.md.
 </details>
+
+# 👨‍💻 Тестирование 
+Социальная сеть **FriendLove** была успешно протестирована.
+Чтобы ознакомиться с JUnit-тестами, откройте соответствующую директорию
+(test).
+
+![Result](images/junit_tests/success.png)
