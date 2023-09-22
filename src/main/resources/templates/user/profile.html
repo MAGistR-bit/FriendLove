@@ -1,0 +1,1011 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--  Заголовок -->
+    <title th:text="${currentUser.getId()==authorizedUser.getId()?'Профиль':currentUser.getName()+' '+currentUser.getSurname()}">
+        Личная страница
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+            crossorigin="anonymous"></script>
+</head>
+<!-- Оформление -->
+<body style="background-color: #F0F1F2;">
+
+<nav class="navbar" style="background-color: #FFFFFF;">
+    <div class="container-fluid my-2 mx-5">
+        <a class="navbar-brand fs-3 fw-bold text-primary ms-2"
+           th:text="${@environment.getProperty('app.projectName.en')}">FriendLove</a>
+        <div class="d-flex justify-content-end">
+            <div class="dropdown-center ms-3">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                    <img th:src="@{${authorizedUser.getAvatar()}}" class="rounded-circle" style="vertical-align: middle;
+                                  width: 28px;
+                                  height: 28px;
+                                  object-fit: cover;
+                                  border-radius: 50%;"
+                         alt="Аватар">
+                    <span th:text="${authorizedUser.getName()+' '+authorizedUser.getSurname()}">Пользователь</span>
+                </button>
+                <!--   Выпадающее меню  -->
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="/logout">Выход</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container text-center my-5 mx-5">
+    <div class="row justify-content-between">
+        <div class="col-2">
+            <div class="list-group text-start">
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold text-primary"
+                        form="toProfilePage">
+                    Моя страница
+                </button>
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold"
+                        form="toNewsPage">
+                    Новости
+                </button>
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold"
+                        form="toMessagesPage">
+                    Сообщения
+                </button>
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold"
+                        form="toGroupsPage">
+                    Группы
+                </button>
+                <button type="submit" class="list-group-item list-group-item-action fw-semibold"
+                        form="toFriendsPage">
+                    Друзья
+                </button>
+                <form id="toProfilePage" th:action="@{/profile}" method="get"></form>
+                <form id="toNewsPage" th:action="@{/}" method="get"></form>
+                <form id="toMessagesPage" th:action="@{/messages}" method="get"></form>
+                <form id="toGroupsPage" th:action="@{/groups}" method="get"></form>
+                <form id="toFriendsPage" th:action="@{/friends}" method="get"></form>
+            </div>
+        </div>
+        <div class="col-9 ms-5 mx-auto">
+            <div class="container rounded bg-white py-4">
+                <div class="container">
+                    <div class="row justify-content-between">
+                        <div class="col-5">
+                            <button type="button" class="btn rounded-circle" style="height: auto;"
+                                    onclick="myFunction2(this)" data-bs-toggle="modal" data-bs-target="#photoModal"
+                                    th:data-bs-whatever="${avatar.getJsonn()}">
+                                <img th:src="@{${currentUser.getAvatar()}}" style="vertical-align: middle;
+                                  width: 200px;
+                                  height: 200px;
+                                  object-fit: cover;
+                                  border-radius: 50%;" class="rounded-circle me-2" alt="..."></button>
+                            <!--   Количество друзей, подписок -->
+                            <div class="text-center my-4">
+                                <button type="button" class="btn btn-light fw-semibold me-1" data-bs-toggle="modal"
+                                        data-bs-target="#friendsListModal">
+                                    <p class="fs-6 m-0" th:text="${friends.size()}">2</p>друзей
+                                </button>
+                                <button type="button" class="btn btn-light fw-semibold me-1" data-bs-toggle="modal"
+                                        data-bs-target="#subscribersListModal">
+                                    <p class="fs-6 m-0" th:text="${subscribers.size()}">1</p>подписчиков
+                                </button>
+                                <button type="button" class="btn btn-light fw-semibold" data-bs-toggle="modal"
+                                        data-bs-target="#subscriptionListModal">
+                                    <p class="fs-6 m-0" th:text="${groups.size()+friends.size()}">
+                                        1</p>сообщество
+                                </button>
+                            </div>
+                            <!--   Отправка сообщения (гиперссылка)  -->
+                            <a th:if="${currentUser.id!=authorizedUser.id}"
+                               th:href="@{/messages/{id}(id=${currentUser.id})}" class="btn btn-outline-primary"
+                               type="submit">Отправить сообщение</a>
+                        </div>
+                        <div class="col text-start ms-3">
+                            <div class="d-flex justify-content-between">
+                                <p class="fs-3 d-inline-flex"
+                                   th:text="${currentUser.getName()+' '+currentUser.getSurname()}">Mikhail Mikhail</p>
+                                <button th:if="${authorizedUser.getId()==currentUser.getId()}" type="button"
+                                        class="btn btn-outline-light mb-2" data-bs-toggle="modal"
+                                        data-bs-target="#editPersonalInfoModal">
+                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkdn5F76ZwDrFLccInphTTfJCjfZLTMxEpfw&usqp=CAU"
+                                         class="rounded-circle" style="max-width: 38px;" alt="Изображение">
+                                </button>
+                                <th:block th:if="${authorizedUser.getId()!=currentUser.getId()}">
+                                    <button th:if="${displayButtonVariant==1}" class="btn btn-outline-secondary"
+                                            href="#" style="height: 38px" role="button" disabled><p class="fw-bold">У
+                                        вас в друзьях</p></button>
+                                    <button th:if="${displayButtonVariant==2}" class="btn btn-primary" href="#"
+                                            style="height: 38px" role="button" disabled><p class="fw-semibold">Заявка
+                                        отправлена</p></button>
+                                    <button th:if="${displayButtonVariant==3}" class="btn btn-primary" href="#"
+                                            style="height: 38px" role="button" type="submit" form="send-request-form"><p
+                                            class="fw-semibold">Добавить в друзья</p></button>
+                                </th:block>
+                            </div>
+                            <p class="fs-6" th:if="${!currentUser.getStatus().isEmpty()}"
+                               th:text="${'Статус: '+currentUser.getStatus()}">Статус: В школе. </p>
+                            <p class="fs-6" th:if="${!currentUser.getLocation().isEmpty()}"
+                               th:text="${'Город: '+currentUser.getLocation()}">Город: Рязань</p>
+                            <p class="fs-6" th:if="${currentUser.getBirthDate()!=null}"
+                               th:text="${'День рождения: '+currentUser.getBirthDate()}">
+                                День рождения: 12 мая 1995 г. </p>
+                            <p class="fs-6" th:if="${!currentUser.getUniversity().isEmpty()}"
+                               th:text="${'Образование: '+currentUser.getUniversity()}">Образование: МФТИ</p>
+                            <p class="fs-6" th:if="${!currentUser.getJob().isEmpty()}"
+                               th:text="${'Место работы: '+currentUser.getJob()}">Работа: Правительство Москвы</p>
+                            <div class="overflow-auto h-auto" style="height:65px;width: 90%;background-color: #f3f3f3;overflow: auto;
+                                                                             white-space: nowrap;">
+                                <button th:if="${authorizedUser.getId()==currentUser.getId()}" type="button"
+                                        class="btn m-0 p-0" style="" onclick="imageInput()">
+                                    <img src="/./img/plus_edited.png" class="img-fluid d-inline-flex"
+                                         style="width: 60px;height: auto" alt="..."></button>
+
+                                <button th:each="photo:${photos}" type="button" class="btn m-0 p-0" style=""
+                                        onclick="myFunction2(this)" data-bs-toggle="modal" data-bs-target="#photoModal"
+                                        th:data-bs-whatever="${photo.getJsonn()}">
+                                    <img th:src="@{${photo.photoPath}}" class="img-fluid d-inline-flex"
+                                         style="max-height: 65px;width: auto" alt="..."></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <button th:if="${authorizedUser.getId()==currentUser.getId()}" type="button"
+                        class="btn btn-light fw-semibold my-3" data-bs-toggle="modal" data-bs-target="#addPostModal">
+                    Добавить запись
+                </button>
+                <form id="form-upload" th:method="POST" th:action="@{/profile/upload}" enctype="multipart/form-data"
+                      style="display: none">
+                    <div class="form-group">
+                        <input id="input-upload" type="file" name="image" accept="image/*" class="form-control-file">
+                    </div>
+                </form>
+
+
+                <div th:each="post:${posts}" class="card mx-auto my-3" style="width: 80%;">
+                    <div class="card-body">
+
+                        <div id="header" class="d-flex justify-content-between mb-0">
+                            <a href="#" class="text-decoration-none text-dark">
+                                <div class="d-inline-flex">
+                                    <img th:src="@{${post.getAuthor().getAvatar()}}"
+                                         style="vertical-align: middle;
+                                  width: 40px;
+                                  height: 40px;
+                                  object-fit: cover;
+                                  border-radius: 50%;" alt="...">
+                                    <p class="fs-6 mt-2 ms-1"
+                                       th:text="${post.getAuthor().getName()+' '+post.getAuthor().getSurname()}">
+                                        Mikhail Mikhail</p>
+                                </div>
+                            </a>
+                            <div th:onmouseover="mouseOver(this,[[${authorizedUser.getId()==post.getAuthor().getId()}]])"
+                                 th:onmouseout="mouseOut(this,[[${authorizedUser.getId()==post.getAuthor().getId()}]])"
+                                 class="d-flex align-center">
+                                <p id="created_at" class="fs-6 mt-1"
+                                   th:text="${post.getCreatedAt().getHour()+(post.getCreatedAt().getMinute()<10?':0':':')+ post.getCreatedAt().getMinute()}">
+                                    11:43</p>
+                                <div class="d-inline-flex text-end">
+
+                                    <div id="settings" class="dropdown" style="display: none">
+                                        <button class="btn btn-light fs-5 fw-semibold" type="button"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                            ⋮
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <button class="dropdown-item" type="button" data-bs-toggle="modal"
+                                                        data-bs-target="#editPostByAuthorModal"
+                                                        th:data-bs-whatever="${post.getJsonn()}">Редактировать
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button class="dropdown-item" th:form="${'deletePost'+post.getId()}"
+                                                        type="submit">Удалить
+                                                </button>
+                                            </li>
+                                            <form th:id="${'deletePost'+post.getId()}" th:method="POST"
+                                                  th:action="@{/profile/delete-post}">
+                                                <input type="hidden" name="post_id" th:value="${post.getId()}">
+                                            </form>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <hr class="mt-0 mb-3">
+                        <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal"
+                           data-bs-target="#postModal" onclick="myFunction(this)"
+                           th:data-bs-whatever="${post.getJsonn()}"><p class="card-text text-start fs-6"
+                                                                       th:text="${post.getPost()}">
+                            Мой первый пост!
+                        </p></a>
+                    </div>
+                    <div class="card-footer text-start">
+                        <button type="submit" class="btn btn-light btn-sm" form="post-like-form">
+                            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52tbpQ8Q8MX5ZkTaHbzV2h2-NInPjmfxTpw&usqp=CAU"
+                                 class="rounded-circle" style="max-width: 20px;" alt="Image">
+                            Понравилось <p class="m-0 d-inline-flex" th:text="${post.getRating()}">5</p>
+                        </button>
+                        <form id="post-like-form" method="post" action="/profile/like-post" style="display: none;">
+                            <input type="hidden" name="post_id" th:value="${post.id}">
+                        </form>
+                        <button type="button" class="btn btn-light btn-sm fw-semibold" data-bs-toggle="modal"
+                                data-bs-target="#postModal" th:data-bs-whatever="${post.getJsonn()}">
+                            Комментарии
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="send-request-form" th:method="POST" th:action="@{/friends/request-friendship}">
+    <input type="hidden" id="sender_id" name="sender_id" th:value="${authorizedUser.getId()}">
+    <input type="hidden" id="receiver_id" name="receiver_id" th:value="${currentUser.getId()}">
+</form>
+
+<script th:inline="javascript">
+
+    function imageInput() {
+        document.getElementById("input-upload").click();
+    }
+
+    document.getElementById("input-upload").onchange = function () {
+        document.getElementById("form-upload").submit();
+    };
+
+
+    function mouseOver(divv, bool) {
+        if (typeof (bool) === "number") {
+            let author_id = divv.querySelector('#comment_author_id').value;
+            bool = author_id === bool;
+        }
+
+        if (bool) {
+            divv.querySelector('#created_at').style.display = "none";
+            divv.querySelector('#settings').style.display = "inline";
+        }
+    }
+
+    function mouseOut(divv, bool) {
+        if (typeof (bool) === "number") {
+            const author_id = divv.querySelector('#comment_author_id').value;
+            bool = author_id === bool;
+        }
+
+        if (bool) {
+            divv.querySelector('#settings').style.display = "none";
+            divv.querySelector('#created_at').style.display = "inline";
+        }
+    }
+
+</script>
+
+<!--   Редактировать публикацию/запись -->
+<div class="modal fade" id="editPostByAuthorModal" tabindex="-1" aria-labelledby="editPostByAuthorModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editPostByAuthorModalLabel">Редактировать пост</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editPostForm" th:method="POST" th:action="@{/profile/edit-post}">
+                    <input type="hidden" name="user_id" th:value="${authorizedUser.getId()}">
+                    <input type="hidden" name="post_id" id="post_id">
+                    <div class="mb-3">
+                        <label for="status" class="col-form-label">Пост:</label>
+                        <textarea class="form-control" name="post" id="post"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="submit" class="btn btn-primary" form="editPostForm">Редактировать</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Конец блока, отвечающего за редактирование -->
+
+<!--  Список друзей -->
+<div class="modal fade" id="friendsListModal" tabindex="-1" aria-labelledby="friendsListModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="width: 360px;margin: auto;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 ms-4" id="addPostModalLabel">Друзья</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div th:each="friend:${friends}" class="row p-2 mx-auto">
+                    <a th:href="@{/user/{id}(id=${friend.getId()})}" class="text-decoration-none text-dark">
+                        <div class="d-inline-flex">
+                            <img th:src="@{${friend.getAvatar()}}" style="vertical-align: middle;
+                                  width: 45px;
+                                  height: 45px;
+                                  object-fit: cover;
+                                  border-radius: 50%;" class="rounded-circle me-3" alt="...">
+                            <p class="fs-6 fw-semibold my-2" th:text="${friend.getName()+' '+friend.getSurname()}">
+                                Алексей Нагин
+                            </p>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- Конец списка -->
+
+<!--  Подписчики -->
+<div class="modal fade" id="subscribersListModal" tabindex="-1" aria-labelledby="subscribersListModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="width: 360px;margin: auto;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 ms-4" id="subscribersListModalLabel">Подписчики</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div th:each="subscriber:${subscribers}" class="row p-2 mx-auto">
+                    <a th:href="@{/user/{id}(id=${subscriber.getId()})}" class="text-decoration-none text-dark">
+                        <div class="d-inline-flex">
+                            <img th:src="@{${subscriber.getAvatar()}}" style="vertical-align: middle;
+                                  width: 45px;
+                                  height: 45px;
+                                  object-fit: cover;
+                                  border-radius: 50%;" class="rounded-circle me-3"
+                                 alt="...">
+                            <p class="fs-6 fw-semibold my-2"
+                               th:text="${subscriber.getName()+' '+subscriber.getSurname()}">Алина Загитова</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Конец блока, отвечающего за отображение подписчиков -->
+
+<!--  Сообщества/группы пользователя -->
+<div class="modal fade" id="subscriptionListModal" tabindex="-1" aria-labelledby="subscriptionListModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable" style="width: 360px;margin: auto;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5 ms-4" id="subscriptionListModalLabel">Группы</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div th:each="group:${groups}" class="row p-2 mx-auto">
+                    <a th:href="@{/group/{id}(id=${group.getId()})}" class="text-decoration-none text-dark">
+                        <div class="d-inline-flex">
+                            <img th:src="@{${group.getAvatar()}}" style="vertical-align: middle;
+                                  width: 45px;
+                                  height: 45px;
+                                  object-fit: cover;
+                                  border-radius: 50%;" class="rounded-circle me-3" alt="...">
+                            <p class="fs-6 fw-semibold my-2" th:text="${group.getName()}">
+                                Морской флот
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Конец блока, отвечающего за отображение сообществ -->
+
+<!-- Модальное окно для добавления записи -->
+<div class="modal fade" id="addPostModal" tabindex="-1" aria-labelledby="addPostModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="addPostModalLabel">Добавить запись</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addPost" th:method="POST" th:action="@{/profile/post}">
+
+                    <div class="mb-3">
+                        <textarea class="form-control" name="post" id="post" style="min-height: 75px;"></textarea>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="submit" class="btn btn-primary" form="addPost">Создать</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Конец блока -->
+
+<!-- Модальное окно для изменения персональной информации -->
+<div class="modal fade" id="editPersonalInfoModal" tabindex="-1" aria-labelledby="editPersonalInfoModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="editPersonalInfoModalLabel">Информация о пользователе</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="infoForm" th:method="POST" th:action="@{/profile/personalInfo}" th:object="${authorizedUser}">
+                    <div class="mb-3">
+                        <div class="mb-3">
+                            <label for="status" class="col-form-label">Статус:</label>
+                            <textarea class="form-control" id="status" th:field="*{status}"></textarea>
+                        </div>
+                        <label for="location" class="col-form-label">Город:</label>
+                        <input type="text" class="form-control" id="location" th:field="*{location}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="birthDate" class="col-form-label">День рождения:</label>
+                        <input type="date" class="form-control" id="birthDate" th:field="*{birthDate}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="university" class="col-form-label">Образование:</label>
+                        <input type="text" class="form-control" id="university" th:field="*{university}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="job" class="col-form-label">Место работы:</label>
+                        <input type="text" class="form-control" id="job" th:field="*{job}">
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <button type="submit" class="btn btn-primary" form="infoForm">Сохранить</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Конец соответствующего блока -->
+
+<!-- Фотография -->
+<div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="photoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="photoModalLabel">Фотография</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center" style="height: 500px;background-color: #717171">
+                <img id="photo-of-modal" src="https://via.placeholder.com/300" class="img-fluid" style="width: auto;
+                                                                                            max-height: 500px;
+                                                                                            position: relative;
+                                                                                            top: 50%;
+                                                                                            transform: translateY(-50%);"
+                     alt="...">
+            </div>
+            <div class="modal-footer">
+                <div class="container my-0">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <button type="submit" class="btn btn-light btn-sm fs-6" form="photo-like-form">
+                                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52tbpQ8Q8MX5ZkTaHbzV2h2-NInPjmfxTpw&usqp=CAU"
+                                     class="rounded-circle" style="max-width: 24px;" alt="Изображение">
+                                Понравилось <p id="like" class="m-0 d-inline-flex">5</p>
+                            </button>
+                            <form id="photo-like-form" method="post" action="/profile/like-photo"
+                                  style="display: none;">
+                                <input type="hidden" name="photo_id" id="like-photo-id">
+                            </form>
+                            <button type="button" class="btn btn-light btn-sm fw-bold fs-6" disabled>
+                                Комментарии
+                            </button>
+                        </div>
+
+                        <div class="d-inline-flex text-end">
+                            <p id="published-date" class="d-inline-flex fs-6 mt-3 me-2">06.05.2023 05:36</p>
+                            <button th:if="${currentUser.id==authorizedUser.id}" class="btn btn-light fs-5 fw-semibold"
+                                    type="button" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                ⋮
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <button class="dropdown-item"
+                                            onclick="setAvatarForm(this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode)"
+                                            type="button">Установить как аватарку
+                                    </button>
+                                </li>
+                                <form id="avatarForm" method="post" action="/profile/set-as-avatar">
+                                    <input type="hidden" name="user_id" th:value="${authorizedUser.id}">
+                                    <input type="hidden" id="avatar_photo_id" name="photo_id">
+                                </form>
+                                <li>
+                                    <button class="dropdown-item"
+                                            onclick="deletePhotoForm(this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode)"
+                                            type="button">Удалить
+                                    </button>
+                                </li>
+                                <form id="deletePhotoForm" method="post" action="/profile/delete-user-photo">
+                                    <input type="hidden" id="delete-form-photo-id" name="photo_id">
+                                </form>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container m-0 p-0">
+                    <hr class="my-3">
+                </div>
+                <div class="container mb-3 mt-4">
+                    <div class="row justify-content-center">
+                        <div class="col-9">
+                            <form th:method="POST" th:action="@{/profile/add-photo-comment}">
+                                <div class="card">
+                                    <div class="card-body d-flex">
+                                        <input type="hidden" name="user_id" id="user_id"
+                                               th:value="${authorizedUser.getId()}">
+                                        <input type="hidden" name="photo_id" id="photo_id">
+                                        <input name="comment" class="form-control me-2" type="text">
+                                        <button class="btn btn-outline-primary" type="submit">Отправить</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="container mt-2 mb-4 overflow-auto" style="max-height: 500px;">
+                    <div class="row justify-content-center">
+                        <div id="comment-storage-photo" class="col-9">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Конец соответствующего блока -->
+
+<script>
+    function setAvatarForm(divv) {
+        const submitForm = divv.querySelector('#avatarForm');
+        submitForm.submit();
+    }
+
+    function deletePhotoForm(divv) {
+        const submitForm = divv.querySelector('#deletePhotoForm');
+        submitForm.submit();
+    }
+
+    const photoModal = document.getElementById('photoModal')
+    photoModal.addEventListener('show.bs.modal', event => {
+        const button = event.relatedTarget
+        const photo_obj = JSON.parse(button.getAttribute('data-bs-whatever'))
+        const photo = photoModal.querySelector('.modal-body img[id=photo-of-modal]')
+        const photoId = photoModal.querySelector('.modal-footer input[id=photo_id]')
+        const photoToAvatarId = photoModal.querySelector('.modal-footer input[id=avatar_photo_id]')
+        const deleteFormPhotoId = photoModal.querySelector('.modal-footer input[id=delete-form-photo-id]')
+        const like = photoModal.querySelector('.modal-footer p[id=like]')
+        const likeInput = photoModal.querySelector('.modal-footer input[id=like-photo-id]')
+        const time = photoModal.querySelector('.modal-footer p[id=published-date]')
+
+        var options = {hour: '2-digit', minute: '2-digit', year: 'numeric', month: 'long', day: 'numeric'};
+        const eventt = new Date(photo_obj.createdAt);
+
+        photo.src = photo_obj.photoPath;
+        like.innerText = photo_obj.rating;
+        likeInput.value = photo_obj.id;
+        time.innerText = eventt.toLocaleDateString(undefined, options);
+        photoId.value = photo_obj.id;
+        photoToAvatarId.value = photo_obj.id;
+        deleteFormPhotoId.value = photo_obj.id;
+    })
+
+    function myFunction2(button) {
+
+        const commentCount = document.querySelector('#commentary_count');
+
+        document.querySelector('#comment-storage-photo').innerHTML = "";
+
+        const photo_obj = JSON.parse(button.getAttribute('data-bs-whatever'));
+
+        commentCount.innerText = photo_obj.userPhotoComments.length + " комментарии:";
+
+        document.querySelector('#comment-storage-photo').appendChild(commentCount);
+
+        for (let i = 0; i < Object.keys(photo_obj.userPhotoComments).length; i++) {
+            const commentFrame = document.getElementById("photo-comment-frame").cloneNode(true);
+
+
+            const options = {weekday: 'long', hour: '2-digit', minute: '2-digit'};
+            const eventt = new Date(photo_obj.userPhotoComments[i].createdAt);
+
+
+            const authorAvatar = commentFrame.querySelector('#comment_author');
+            const authorName = commentFrame.querySelector('#comment_author_name');
+            const createdAt = commentFrame.querySelector('#created_at');
+            const postComment = commentFrame.querySelector('#post_comment');
+            const authorId = commentFrame.querySelector('#comment_author_id');
+            const comId = commentFrame.querySelector('#comment_id');
+
+            authorAvatar.src = photo_obj.userPhotoComments[i].author.avatar;
+            authorName.innerText = photo_obj.userPhotoComments[i].author.name + " " + photo_obj.userPhotoComments[i].author.surname;
+            createdAt.innerText = eventt.toLocaleDateString(undefined, options);
+            postComment.innerText = photo_obj.userPhotoComments[i].comment;
+            authorId.value = photo_obj.userPhotoComments[i].author.id;
+            comId.value = photo_obj.userPhotoComments[i].id;
+
+            document.querySelector('#comment-storage-photo').appendChild(commentFrame);
+        }
+
+    }
+
+
+    function deletePhotoCommentForm(divv) {
+        const inputCommentId = divv.querySelector('#delete-form-comment-id');
+        inputCommentId.value = divv.querySelector('#comment_id').value;
+
+        const deleteForm = divv.querySelector('#deleteCommentForm');
+        deleteForm.submit();
+    }
+
+
+    function displayEditPhotoCommentForm(divv) {
+
+
+        const containerr = divv.querySelector('#comment_header');
+        const commentIdSource = divv.querySelector('#comment_id').value;
+
+        const comment = divv.querySelector('#post_comment');
+        comment.style.display = "none";
+
+        const commentEditFrame = document.getElementById("photoCommentEditForm").cloneNode(true);
+        const commentId = commentEditFrame.querySelector('#comment_id');
+        const commentTextArea = commentEditFrame.querySelector('#comment');
+
+        commentId.value = commentIdSource;
+        commentTextArea.innerText = comment.innerText;
+
+        divv.appendChild(commentEditFrame);
+
+    }
+
+
+</script>
+
+<!-- Публикация на стене -->
+<div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header pb-2">
+                <h1 class="modal-title fs-5" id="postModalLabel">
+                    <a id="author-href" href="#" class="text-decoration-none text-dark">
+                        <div class="d-inline-flex">
+                            <img id="author-avatar" src="https://via.placeholder.com/200"
+                                 style="vertical-align: middle;
+                                  width: 45px;
+                                  height: 45px;
+                                  object-fit: cover;
+                                  border-radius: 50%;"
+                                 class="rounded-circle me-2" alt="...">
+                            <p id="author-name" class="fs-6 mt-2">Mikhail Mikhail</p>
+                        </div>
+                    </a>
+                </h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body px-4" style="min-height: 100px">
+                <p id="post-text" class="card-text text-start fs-6">
+                    Мой первый пост!
+                </p>
+            </div>
+            <div class="modal-footer">
+                <div class="container text-start">
+                    <button type="button" class="btn btn-light btn-sm fs-6">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS52tbpQ8Q8MX5ZkTaHbzV2h2-NInPjmfxTpw&usqp=CAU"
+                             class="rounded-circle" style="max-width: 24px;" alt="Cinque Terre">
+                        Понравилось <p id="like" class="m-0 d-inline-flex">5</p>
+                    </button>
+                    <button type="button" class="btn btn-light btn-sm fw-bold fs-6" disabled>
+                        Комментарии
+                    </button>
+                </div>
+
+                <div class="container m-0 p-0">
+                    <hr class="my-3">
+                </div>
+                <div class="container mb-3 mt-4">
+                    <div class="row justify-content-center">
+                        <div class="col-9">
+                            <form th:method="POST" th:action="@{/profile/add-post-comment}">
+                                <div class="card">
+                                    <div class="card-body d-flex">
+                                        <input type="hidden" name="user_id" id="user_id"
+                                               th:value="${authorizedUser.getId()}">
+                                        <input type="hidden" name="post_id" id="post_id">
+                                        <input name="comment" class="form-control me-2" type="text">
+                                        <button class="btn btn-outline-primary" type="submit">Написать</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="container mt-2 mb-4 overflow-auto" style="max-height: 500px;">
+                    <div class="row justify-content-center">
+                        <div id="comment-storage" class="col-9">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="templateComment" tabindex="-1" aria-labelledby="templateCommentLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-footer">
+                <p id="commentary_count" class="fs-5 text-start">1 комментарии:</p>
+
+
+                <div id="comment-frame" class="card mt-2">
+                    <div id="toEditCommentForm" data-attr="parent" class="card-body">
+                        <div id="comment_header" class="d-flex justify-content-between">
+                            <a href="#" class="text-decoration-none text-dark">
+                                <div class="d-inline-flex authorDDD">
+                                    <img id="comment_author" src="https://via.placeholder.com/200" style="vertical-align: middle;
+                                  width: 35px;
+                                  height: 35px;
+                                  object-fit: cover;
+                                  border-radius: 50%;" class="rounded-circle me-2" alt="...">
+                                    <p id="comment_author_name" class="fs-6 mt-1">Mikhail Mikhail</p>
+                                </div>
+                            </a>
+                            <div th:onmouseover="mouseOver(this,[[${authorizedUser.getId()}]])"
+                                 th:onmouseout="mouseOut(this,[[${authorizedUser.getId()}]])"
+                                 class="d-flex align-center">
+                                <input type="hidden" id="comment_author_id">
+                                <input type="hidden" id="comment_id">
+                                <p id="created_at" class="fs-6">11:43</p>
+                                <div class="d-inline-flex text-end">
+                                    <div id="settings" class="dropup-center dropup" style="display: none">
+                                        <button class="btn btn-light fs-6 fw-semibold" type="button"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                            ⋮
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-lg-end">
+                                            <li>
+                                                <button class="dropdown-item"
+                                                        onclick="displayEditCommentForm(this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode)"
+                                                        type="button">Редактировать
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button class="dropdown-item"
+                                                        onclick="deleteCommentForm(this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode)"
+                                                        type="button">Удалить
+                                                </button>
+                                            </li>
+                                            <form id="deleteCommentForm" method="post"
+                                                  action="/profile/delete-post-comment">
+                                                <input type="hidden" id="delete-form-comment-id" name="comment_id">
+                                            </form>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <p id="post_comment" class="card-text text-start" style="width: 90%;
+                                                                                   hyphens: auto">Очень хороши пост.</p>
+                    </div>
+                </div>
+                <form id="commentEditForm" th:method="POST" th:action="@{/profile/edit-post-comment}">
+                    <input type="hidden" id="comment_id" name="comment_id">
+                    <textarea class="form-control" name="comment" id="comment"></textarea>
+                    <div class="text-end">
+                        <button class="btn btn-light btn-sm mt-2 fw-semibold align-self-end" type="submit">Отмена
+                        </button>
+                        <button class="btn btn-light btn-sm mt-2 fw-semibold align-self-end" form="commentEditForm"
+                                type="submit">Редактировать
+                        </button>
+                    </div>
+                </form>
+                <div id="photo-comment-frame" class="card mt-2">
+                    <div id="toEditCommentForm" data-attr="parent" class="card-body">
+                        <div id="comment_header" class="d-flex justify-content-between">
+                            <a href="#" class="text-decoration-none text-dark">
+                                <div class="d-inline-flex authorDDD">
+                                    <img id="comment_author" src="https://via.placeholder.com/200" style="vertical-align: middle;
+                                  width: 35px;
+                                  height: 35px;
+                                  object-fit: cover;
+                                  border-radius: 50%;" class="rounded-circle me-2" alt="...">
+                                    <p id="comment_author_name" class="fs-6 mt-1">Mikhail Mikhail</p>
+                                </div>
+                            </a>
+                            <div th:onmouseover="mouseOver(this,[[${authorizedUser.getId()}]])"
+                                 th:onmouseout="mouseOut(this,[[${authorizedUser.getId()}]])"
+                                 class="d-flex align-center">
+                                <input type="hidden" id="comment_author_id">
+                                <input type="hidden" id="comment_id">
+                                <p id="created_at" class="fs-6">11:43</p>
+                                <div class="d-inline-flex text-end">
+                                    <div id="settings" class="dropup-center dropup" style="display: none">
+                                        <button class="btn btn-light fs-6 fw-semibold" type="button"
+                                                data-bs-toggle="dropdown" aria-expanded="false">
+                                            ⋮
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-lg-end">
+                                            <li>
+                                                <button class="dropdown-item"
+                                                        onclick="displayEditPhotoCommentForm(this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode)"
+                                                        type="button">Редактировать
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <button class="dropdown-item"
+                                                        onclick="deletePhotoCommentForm(this.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode)"
+                                                        type="button">Удалить
+                                                </button>
+                                            </li>
+                                            <form id="deleteCommentForm" method="post"
+                                                  action="/profile/delete-photo-comment">
+                                                <input type="hidden" id="delete-form-comment-id" name="comment_id">
+                                            </form>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <p id="post_comment" class="card-text text-start" style="width: 90%;
+                                                                                   hyphens: auto">Очень хороши пост.</p>
+                    </div>
+                </div>
+
+                <form id="photoCommentEditForm" th:method="POST" th:action="@{/profile/edit-photo-comment}">
+                    <input type="hidden" id="comment_id" name="comment_id">
+                    <textarea class="form-control" name="comment" id="comment"></textarea>
+                    <div class="text-end">
+                        <button class="btn btn-light btn-sm mt-2 fw-semibold align-self-end" type="submit">Отмена
+                        </button>
+                        <button class="btn btn-light btn-sm mt-2 fw-semibold align-self-end" form="photoCommentEditForm"
+                                type="submit">Редактировать
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function deleteCommentForm(divv) {
+        const inputCommentId = divv.querySelector('#delete-form-comment-id');
+        inputCommentId.value = divv.querySelector('#comment_id').value;
+
+        const deleteForm = divv.querySelector('#deleteCommentForm');
+        deleteForm.submit();
+    }
+
+
+    function displayEditCommentForm(divv) {
+
+
+        const containerr = divv.querySelector('#comment_header');
+        const commentIdSource = divv.querySelector('#comment_id').value;
+
+        const comment = divv.querySelector('#post_comment');
+        comment.style.display = "none";
+
+        const commentEditFrame = document.getElementById("commentEditForm").cloneNode(true);
+        const commentId = commentEditFrame.querySelector('#comment_id');
+        const commentTextArea = commentEditFrame.querySelector('#comment');
+
+        commentId.value = commentIdSource;
+        commentTextArea.innerText = comment.innerText;
+
+        divv.appendChild(commentEditFrame);
+
+    }
+
+    function myFunction(button) {
+
+        const commentCount = document.querySelector('#commentary_count');
+
+        document.querySelector('#comment-storage').innerHTML = "";
+
+        const post_obj = JSON.parse(button.getAttribute('data-bs-whatever'));
+
+        commentCount.innerText = post_obj.postComments.length + " комментарии:";
+
+        document.querySelector('#comment-storage').appendChild(commentCount);
+
+        for (let i = 0; i < Object.keys(post_obj.postComments).length; i++) {
+            const commentFrame = document.getElementById("comment-frame").cloneNode(true);
+
+
+            const options = {weekday: 'long', hour: '2-digit', minute: '2-digit'};
+            const eventt = new Date(post_obj.postComments[i].createdAt);
+            const authorAvatar = commentFrame.querySelector('#comment_author');
+            const authorName = commentFrame.querySelector('#comment_author_name');
+            const createdAt = commentFrame.querySelector('#created_at');
+            const postComment = commentFrame.querySelector('#post_comment');
+            const authorId = commentFrame.querySelector('#comment_author_id');
+            const comId = commentFrame.querySelector('#comment_id');
+
+            authorAvatar.src = post_obj.postComments[i].author.avatar;
+            authorName.innerText = post_obj.postComments[i].author.name + " " + post_obj.postComments[i].author.surname;
+            createdAt.innerText = eventt.toLocaleDateString(undefined, options);
+            postComment.innerText = post_obj.postComments[i].comment;
+            authorId.value = post_obj.postComments[i].author.id;
+            comId.value = post_obj.postComments[i].id;
+            document.querySelector('#comment-storage').appendChild(commentFrame);
+        }
+
+    }
+
+
+    const exampleModal = document.getElementById('postModal')
+    exampleModal.addEventListener('show.bs.modal', event => {
+
+        const button = event.relatedTarget
+
+        const post_obj = JSON.parse(button.getAttribute('data-bs-whatever'))
+
+        const authorAvatar = exampleModal.querySelector('.modal-header img[id=author-avatar]')
+        const authorName = exampleModal.querySelector('.modal-header p[id=author-name]')
+        const authorPageLink = exampleModal.querySelector('.modal-header a[id=author-href]')
+
+        const postText = exampleModal.querySelector('.modal-body p[id=post-text]')
+        const like = exampleModal.querySelector('.modal-footer p[id=like]')
+        const postId = exampleModal.querySelector('.modal-footer input[id=post_id]')
+        const commentaryCount = exampleModal.querySelector('.modal-footer input[id=commentary_count]')
+
+        authorAvatar.src = post_obj.author.avatar;
+        authorName.innerText = post_obj.author.name + " " + post_obj.author.surname;
+        authorPageLink.href = "/user/" + post_obj.author.id;
+
+        postText.innerText = post_obj.post;
+        like.innerText = post_obj.rating;
+        postId.value = post_obj.id;
+        commentaryCount.innerText = post_obj.postComments.length;
+
+
+    })
+
+    const editPostModal = document.getElementById('editPostByAuthorModal')
+    editPostModal.addEventListener('show.bs.modal', event => {
+
+        const button = event.relatedTarget
+
+        const post_obj = JSON.parse(button.getAttribute('data-bs-whatever'))
+
+        const postTextarea = editPostModal.querySelector('.modal-body textarea[id=post]');
+        const postId = editPostModal.querySelector('.modal-body input[id=post_id]');
+
+        postTextarea.innerText = post_obj.post;
+
+        postId.value = post_obj.id;
+
+    })
+</script>
+
+
+</body>
+</html>
