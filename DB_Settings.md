@@ -1,4 +1,4 @@
-# 🗃️ База данных
+# 🗃️ База данных (Database)
 
 Чтобы подключить базу данных, нужно 
 выполнить следующие действия:
@@ -43,6 +43,48 @@ spring.datasource.password=your_password
 Структура таблиц представлена в [Database_FriendLove.txt](Database_FriendLove.txt).
 Выполнив команды SQL, Вы добавите таблицы.
 
-# 📝 Схема базы данных
+# 📝 Схема базы данных (Database schema)
 
 ![Схема БД](images/scheme/scheme_DB.png)
+
+<details>
+<summary>English version</summary>
+
+To connect the database, follow these steps:
+1. **Download the PostgreSQL installer.**
+2. **Install PostgreSQL.**
+
+I will not describe the full installation process, as it may differ
+depending on your operating system.
+
+During the PostgreSQL installation, create a new role, as you may have many databases and many programs
+that use them. Come up with a password, confirm it 2 times.
+3. **Create a database.**
+   The database is created by the SQL command **CREATE DATABASE**:
+```sql
+CREATE DATABASE <name>;
+```
+**_name_** obeys the SQL identifier naming rules.
+4. **Edit application.properties.**
+Change the following parameters by specifying your data:
+```properties
+spring.datasource.url=your_JDBC_URL
+spring.datasource.username=your_name
+spring.datasource.password=your_password
+```
+5. **Connect PostgreSQL to the IntelliJ IDEA project.**
+
+I work with a database using IntelliJ IDEA, so I decided to add
+this item. You can use, for example, pgAdmin.
+
+To connect to the database, create a Data Source
+in which data about your connection will be stored. Then fill
+in the fields shown in the screenshot ([image](images/data_source.png)).
+
+After that, make sure that the connection to the database is successfully established.
+To do this, click on the **_Test Connection_** button.
+If everything is fine, click OK.
+6. **Add tables to the database**.
+   The structure of the tables is presented in [Database_FriendLove.txt](Database_FriendLove.txt).
+   By executing SQL commands, you will add tables.
+</details>
