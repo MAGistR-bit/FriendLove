@@ -357,9 +357,4 @@ public class ProfileController {
         return "redirect:/profile";
     }
 
-    @GetMapping("/test")
-    public String toProfile() {
-        return "/user/test-JS-coping";
-    }
-
 }
