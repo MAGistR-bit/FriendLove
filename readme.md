@@ -101,4 +101,25 @@ Detailed information is provided in the file DB_Settings.md.
 Чтобы ознакомиться с JUnit-тестами, откройте соответствующую директорию
 (test).
 
-![Result](images/junit_tests/success.png)
+![Result](images/junit/successful_tests.png)
+
+<details>
+<summary>English version</summary>
+
+The social network FriendLove has been successfully tested.
+To get acquainted with the JUnit tests, open the corresponding directory
+(test).
+</details>
+
+# ✅ Внесение собственного вклада в проект (Contributing)
+Приветствуются запросы на принятие изменений (_**Pull Request**_). 
+Что касается серьезных изменений, пожалуйста, сначала откройте проблему (**_Issue_**), чтобы обсудить, 
+что Вы хотели бы изменить.
+
+<details>
+<summary> English version </summary>
+
+Pull requests are welcome. For major changes, please open an issue first
+to discuss what you would like to change.
+
+</details>
