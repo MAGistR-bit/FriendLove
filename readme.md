@@ -60,43 +60,70 @@ This project is educational in nature, so I ask you not to judge strictly.
 
 # ⚙️ Технологический стек (Technology stack)
 
-Ниже представлены технологии, используемые при 
+Ниже представлены технологии, используемые при
 разработке социальной сети:
-* Java 
+
+* Java
 * PostgreSQL (система управления базами данных)
 * Spring: Boot, Security, Data
 * Apache Maven (автоматическая сборка проекта)
 * Thymeleaf (шаблонизатор)
-* Bootstrap 5 
+* Bootstrap 5
 
 <details>
 <summary> English version </summary>
 
 Below are the technologies used in
 the development of a social network:
+
 * Java
 * PostgreSQL (Database management system)
 * Spring: Boot, Security, Data
 * Apache Maven (automatic build tool)
 * Thymeleaf (template engine)
 * Bootstrap 5
+
 </details>
 
 # 🔧 Настройка базы данных (Database settings)
 
-Веб-приложение использует СУБД PostgreSQL. 
-Как же подключить базу данных к проекту? 
+Веб-приложение использует СУБД PostgreSQL.
+Как же подключить базу данных к проекту?
 Подробная информация представлена в файле [DB_Settings](DB_Settings.md).
 
 <details>
 <summary> English version</summary>
 
-The web application uses the PostgreSQL. 
+The web application uses the PostgreSQL.
 How do I connect the database to the project?
 Detailed information is provided in the file DB_Settings.md.
 </details>
 
-# 👨‍💻 Тестирование 
+# 🚀 Запуск приложения (Application launch)
+
+Для запуска социальной сети используйте IDE (IntelliJ IDEA).
+Приложение Spring Boot работает на порту **_8080_**.
+
+Указав в адресной строке **_localhost:8080/_**, Вы должны увидеть главную страницу
+приложения. Стартовая страница FriendLove продемонстрирована на скриншоте.
+
+![Main page](images/demonstration/main_page.png)
+
+Чтобы ознакомиться с работой социальной сети (детально), откройте [Demonstration_App.md](Demonstration_App.md)
+<details>
+<summary>English version</summary>
+
+To launch a social network, use the IDE (IntelliJ IDEA).
+The Spring Boot application runs on the port 8080.
+
+By specifying **_localhost:8080/_** in the address bar, you should see the main page
+of the application. The FriendLove homepage is shown in the screenshot.
+
+To get acquainted with the operation of the application (in detail), open [Demonstration_App.md](Demonstration_App.md).
+</details>
+
+# 👨‍💻 Тестирование
+
 Социальная сеть **FriendLove** была успешно протестирована.
 Чтобы ознакомиться с JUnit-тестами, откройте соответствующую директорию
 (test).
@@ -112,8 +139,9 @@ To get acquainted with the JUnit tests, open the corresponding directory
 </details>
 
 # ✅ Внесение собственного вклада в проект (Contributing)
-Приветствуются запросы на принятие изменений (_**Pull Request**_). 
-Что касается серьезных изменений, пожалуйста, сначала откройте проблему (**_Issue_**), чтобы обсудить, 
+
+Приветствуются запросы на принятие изменений (_**Pull Request**_).
+Что касается серьезных изменений, пожалуйста, сначала откройте проблему (**_Issue_**), чтобы обсудить,
 что Вы хотели бы изменить.
 
 <details>
@@ -125,4 +153,5 @@ to discuss what you would like to change.
 </details>
 
 # 📜 Лицензия (License)
+
 [MIT](LICENSE)
