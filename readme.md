@@ -155,3 +155,14 @@ to discuss what you would like to change.
 # 📜 Лицензия (License)
 
 [MIT](LICENSE)
+
+# 🤝 Благодарность (Gratitude)
+Спасибо, что ознакомились с моим проектом!
+Желаю Вам здоровья и всего самого наилучшего! 
+
+<details>
+<summary>English version</summary>
+
+Thank you for reading my project!
+I wish you good health and all the best!
+</details>
