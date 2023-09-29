@@ -1,0 +1,9 @@
+com.gorbatenkov.FriendLove
+com.gorbatenkov.FriendLove.config
+com.gorbatenkov.FriendLove.controllers
+com.gorbatenkov.FriendLove.DTO
+com.gorbatenkov.FriendLove.models
+com.gorbatenkov.FriendLove.repositories
+com.gorbatenkov.FriendLove.security
+com.gorbatenkov.FriendLove.services
+com.gorbatenkov.FriendLove.utils
