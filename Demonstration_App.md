@@ -23,7 +23,7 @@ As soon as you register, all the features of **FriendLove** will be available to
 
 Авторизация в социальной сети FriendLove продемонстрирована ниже.
 
-![Вход в аккаунт](images/demonstration/Вход в аккаунт.gif)
+![Вход в аккаунт](images/demonstration/LogIn.gif)
 
 <details>
 <summary>English version</summary>
@@ -51,7 +51,7 @@ Authorization in the Friend Love social network is demonstrated using animation.
 
 Что касается личной страницы пользователя, то она представлена ниже.
 
-![Личная страница](images/demonstration/Личная страница.gif)
+![Личная страница](images/demonstration/Personal.gif)
 
 Открыв страницу профиля, пользователь имеет следующие возможности:
 
@@ -115,7 +115,7 @@ Communication with a friend is shown as a Gif animation.
 
 Предлагаю ознакомиться с GIF-анимацией, которая демонстрирует данный процесс.
 
-![Поиск друзей](images/demonstration/Поиск друзей.gif)
+![Поиск друзей](images/demonstration/Search.gif)
 
 <details>
 <summary>English version</summary>
