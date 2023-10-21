@@ -1,11 +1,15 @@
 <h1 style="display: block; font-size: 2.5em; font-weight: bold; margin-block-start: 1em; margin-block-end: 1em;">
 <a><img src="images/logo_social_network.png" alt="FriendLove" style="width:65%;
 height:65%"/></a>
+<a><img src="http://cr.openjdk.java.net/~jeff/Duke/png/DuchessCheers.png" alt="Duke" style="width:26%;
+height:40%"/></a>
 </h1>
 
 ![Ubuntu](https://camo.githubusercontent.com/1814dfdb62c9a3366a9946083ac0f3ed32aad98e665b287769332252d945f2f1/68747470733a2f2f696d672e736869656c64732e696f2f7374617469632f76313f7374796c653d666f722d7468652d6261646765266d6573736167653d5562756e747526636f6c6f723d453935343230266c6f676f3d5562756e7475266c6f676f436f6c6f723d464646464646266c6162656c3d)
 
 ![GitHub repo size](https://img.shields.io/github/repo-size/MAGistR-bit/FriendLove)
+
+<img src="https://picocli.info/images/spring-boot.png" width="380" alt="Spring Boot">
 
 ---
 
